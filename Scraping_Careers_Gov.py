@@ -11,27 +11,30 @@ import time
 
 import pandas as pd
 
-# Initializing Web Driver
+# INITIALIZING WEB DRIVER
 PATH = "C:\Program Files\Chromedriver\chromedriver.exe"
 driver = webdriver.Chrome(PATH)
 
-# Opening target page through Driver
+# OPENING TARGET PAGE THROUGH DRIVER
 driver.get("https://careers.pageuppeople.com/688/cwlive/en/listing/")
 
-# Initialzing action chain
+# INITIALIZE ACTION CHAIN
 actions = ActionChains(driver) 
-# actions.click()
+# actions.click() ... If you need to click something
 # actions.perform ... actions do not trigger until actions.perform() is run
 
-# Find the search bar, enter your search (e.g. "manager"), then press Enter (Keys.Return)
+# INITIAL FILTERING
+# Find the search bar, enter your search (e.g. "manager"). The site will auto-filter without the need to press 'Enter'
 search_bar = driver.find_element_by_id("search-keyword")
 search_bar.send_keys("analyst")
-# search_bar.send_keys(Keys.RETURN)
+# search_bar.send_keys(Keys.RETURN)... Technically not needed for this site
 # search_bar.clear() ... If you want to clear the search field
 
+# SLEEP TO ALLOW TIME FOR (SITE) AUTO-FILTERING
 time.sleep(5)
-x = True
 
+# LOAD ENTIRE LISTING BY FINDING AND CLICKING "MORE JOBS" BUTTON UNTIL IT NO LONGER EXISTS
+x = True
 while x == True:
     try:
         element = WebDriverWait(driver, 10).until(
@@ -51,6 +54,7 @@ table = soup.find('table')
 Job_DF = pd.read_html(driver.page_source)[0]
 # pd.read_html(...) provides you with a list of dataframe objects. If you want a table, you need to use the index, [0] in this case, to access it.
 
+# DRAWING OUT LINKS TO EACH INDIVIDUAL JOB POSTING
 Job_links = []
 for tr in table.findAll("tr"):
     trs = tr.findAll("td")
@@ -61,23 +65,12 @@ for tr in table.findAll("tr"):
         except:
             pass
 
+# APPENDING LINKS TO DATAFRAME JOB_DF
 Job_DF['Link'] = Job_links
-Job_DF.to_excel(r'C:\Users\Wong\Desktop\Learning\Web Scraping\Selenium\CAG.xlsx', index=False, header=True)
+
+# EXPORT TO EXCEL FILE
+Job_DF.to_excel(r'C:\... <Your Directory> ...\CAG.xlsx', index=False, header=True)
 
 
-# "More Results" Link
-#more_results = driver.find_element(By.XPATH, '//div[@id="recent-jobs"]/p/a')
-#more_results.click()
-
-
-
-
-# CLicking Links through Link Text (Link text only, not title = "xxx")
-# link = driver.find_element_by_link_text("...")
-# link.click()
-
-# HANDING SELENIUM OFF TO BEAUTIFULSOUP
-#soup = BeautifulSoup(driver.page_source, 'lxml')
-#print(soup)
 
 
