@@ -20,15 +20,16 @@ driver.get("https://careers.pageuppeople.com/688/cwlive/en/listing/")
 
 # INITIALIZE ACTION CHAIN
 actions = ActionChains(driver) 
-# actions.click() ... If you need to click something
-# actions.perform ... actions do not trigger until actions.perform() is run
 
 # INITIAL FILTERING
 # Find the search bar, enter your search (e.g. "manager"). The site will auto-filter without the need to press 'Enter'
 search_bar = driver.find_element_by_id("search-keyword")
 search_bar.send_keys("analyst")
-# search_bar.send_keys(Keys.RETURN)... Technically not needed for this site
-# search_bar.clear() ... If you want to clear the search field
+
+# Checks Checkboxes for permanent / full-time jobs
+check_boxes_fullperm = driver.find_elements_by_xpath('//input[contains(@id, "full") or contains(@id, "permanent")]')
+for x in check_boxes_fullperm:
+    x.click()
 
 # SLEEP TO ALLOW TIME FOR (SITE) AUTO-FILTERING
 time.sleep(5)
